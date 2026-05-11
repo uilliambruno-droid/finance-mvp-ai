@@ -1,62 +1,81 @@
 # Avaliação e Métricas
 
-## Como Avaliar seu Agente
+## Como Avaliar o Pluto
 
-A avaliação pode ser feita de duas formas complementares:
+Duas camadas de avaliação estão implementadas:
 
-1. **Testes estruturados:** Você define perguntas e respostas esperadas;
-2. **Feedback real:** Pessoas testam o agente e dão notas.
+1. **Testes automatizados** — `pytest tests/` cobre extração de perfil, integridade do LLM, persistência e cenários de formulário.
+2. **Feedback em tempo real** — cada resposta do Pluto exibe um formulário de feedback com: polegar 👍/👎, nota de 1–5 ⭐ e campo de texto livre. Tudo é salvo em `data/runtime/events.jsonl`.
 
 ---
 
 ## Métricas de Qualidade
 
-| Métrica | O que avalia | Exemplo de teste |
-|---------|--------------|------------------|
-| **Assertividade** | O agente respondeu o que foi perguntado? | Perguntar o saldo e receber o valor correto |
-| **Segurança** | O agente evitou inventar informações? | Perguntar algo fora do contexto e ele admitir que não sabe |
-| **Coerência** | A resposta faz sentido para o perfil do cliente? | Sugerir investimento conservador para cliente conservador |
-
-> [!TIP]
-> Peça para 3-5 pessoas (amigos, família, colegas) testarem seu agente e avaliarem cada métrica com notas de 1 a 5. Isso torna suas métricas mais confiáveis! Caso use os arquivos da pasta `data`, lembre-se de contextualizar os participantes sobre o **cliente fictício** representado nesses dados.
-
----
-
-## Exemplos de Cenários de Teste
-
-Crie testes simples para validar seu agente:
-
-### Teste 1: Consulta de gastos
-- **Pergunta:** "Quanto gastei com alimentação?"
-- **Resposta esperada:** Valor baseado no `transacoes.csv`
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 2: Recomendação de produto
-- **Pergunta:** "Qual investimento você recomenda para mim?"
-- **Resposta esperada:** Produto compatível com o perfil do cliente
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 3: Pergunta fora do escopo
-- **Pergunta:** "Qual a previsão do tempo?"
-- **Resposta esperada:** Agente informa que só trata de finanças
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 4: Informação inexistente
-- **Pergunta:** "Quanto rende o produto XYZ?"
-- **Resposta esperada:** Agente admite não ter essa informação
-- **Resultado:** [ ] Correto  [ ] Incorreto
+| Métrica | O que avalia | Como medir |
+|---------|--------------|------------|
+| **Assertividade** | O Pluto respondeu o que foi perguntado? | Nota média do feedback (meta: ≥ 4/5) |
+| **Segurança** | Evitou inventar produtos ou taxas? | Ausência de eventos `unknown_asset_alert` sem aviso |
+| **Coerência de perfil** | Resposta coerente com o perfil do usuário? | Taxa de votos positivos pós-formulário |
+| **Detecção de cenário** | Ativou guidance correto por tema? | Cobertura dos 5 cenários em `finance_knowledge.py` |
+| **Registro de transação** | Detectou e salvou corretamente? | Eventos `transaction_recorded` vs. mensagens com verbo+valor |
+| **Tempo de resposta** | LLM respondeu em < 5s? | Timestamp entre `user_message_received` e `answer_source` |
 
 ---
 
-## Resultados
+## Estrutura do Feedback Salvo
 
-Após os testes, registre suas conclusões:
+Cada feedback é um evento JSONL em `data/runtime/events.jsonl`:
 
-**O que funcionou bem:**
-- [Liste aqui]
+```json
+{
+  "timestamp": "2026-05-12T14:23:00Z",
+  "event": "feedback_submitted",
+  "payload": {
+    "message_index": 3,
+    "vote": "positive",
+    "rating": 4,
+    "comment": "Expliquei bem a reserva de emergência, mas faltou o cálculo."
+  }
+}
+```
 
-**O que pode melhorar:**
-- [Liste aqui]
+---
+
+## Cenários de Teste Implementados
+
+| # | Pergunta de teste | Comportamento esperado |
+|---|-------------------|------------------------|
+| 1 | "como montar reserva de emergência?" | Ativa guidance de reserva (regra 6×, Tesouro Selic) |
+| 2 | "devo quitar a dívida ou investir?" | Ativa guidance dívidas vs. investir (comparação de taxas) |
+| 3 | "quanto aportar por mês?" | Ativa guidance de aportes (DCA, pay-yourself-first) |
+| 4 | "quero planejar minha aposentadoria" | Ativa guidance aposentadoria (regra 25×, PGBL vs VGBL) |
+| 5 | "ETF ou renda fixa?" | Ativa guidance ETF vs. RF (IR, volatilidade, perfil) |
+| 6 | "gastei 150 no ifood" | Registra transação: saida / alimentação / R$ 150 |
+| 7 | "recebi R$ 5.000 de salário" | Registra transação: entrada / salário / R$ 5.000 |
+| 8 | "qual a previsão do tempo?" | Pluto redireciona para finanças |
+| 9 | "quanto rende produto XYZ?" | Pluto admite não ter essa informação |
+
+---
+
+## Resultados Actuais (suite pytest)
+
+```
+tests/test_finance_knowledge.py  8 passed
+tests/test_app_integration.py    5 passed
+Total: 13 passed in < 1s
+```
+
+**O que está funcionando bem:**
+- Perfil reconhecido imediatamente após formulário (boas-vindas personalizada)
+- Detecção e registro de gastos/ganhos pelo chat
+- 5 cenários financeiros com guidance estruturado
+- Feedback com nota + texto livre salvo em events.jsonl
+- Persistência completa de sessão (perfil + mensagens + transações)
+
+**Próximas melhorias potenciais:**
+- Dashboard de eventos (leitura do events.jsonl na UI)
+- Gráfico de gastos por categoria (pandas + st.bar_chart)
+- Alerta de anomalia automático quando categoria ultrapassa média
 
 ---
 

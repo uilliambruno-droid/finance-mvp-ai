@@ -1,0 +1,78 @@
+[
+  {
+    "dataset_id": "takala/financial_phrasebank",
+    "config": "sentences_allagree",
+    "purpose": "Sentimento financeiro (texto curto).",
+    "splits": [
+      {
+        "split": "train",
+        "error": "Dataset scripts are no longer supported, but found financial_phrasebank.py"
+      }
+    ]
+  },
+  {
+    "dataset_id": "adityarane/financial-qa-dataset",
+    "config": null,
+    "purpose": "Perguntas e respostas financeiras para estilo assistente.",
+    "splits": [
+      {
+        "split": "train",
+        "error": "[{'expected': SplitInfo(name='train', num_bytes=1004481.9602272727, num_examples=475), 'recorded': SplitInfo(name='train', num_bytes=889196, num_examples=422, dataset_name='financial-qa-dataset')}, {'expected': SplitInfo(name='test', num_bytes=112079.03977272728, num_examples=53), 'recorded': SplitInfo(name='test', num_bytes=226496, num_examples=106, dataset_name='financial-qa-dataset')}]"
+      }
+    ]
+  },
+  {
+    "dataset_id": "zeroshot/twitter-financial-news-sentiment",
+    "config": null,
+    "purpose": "Sentimento de notícias financeiras em linguagem de mercado.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 9543,
+        "original_rows": 9543,
+        "columns": [
+          "text",
+          "label"
+        ],
+        "output_file": "data/hf/zeroshot__twitter-financial-news-sentiment/train.parquet"
+      },
+      {
+        "split": "validation",
+        "rows": 2388,
+        "original_rows": 2388,
+        "columns": [
+          "text",
+          "label"
+        ],
+        "output_file": "data/hf/zeroshot__twitter-financial-news-sentiment/validation.parquet"
+      },
+      {
+        "split": "test",
+        "error": "Unknown split \"test\". Should be one of ['train', 'validation']."
+      }
+    ]
+  },
+  {
+    "dataset_id": "paperswithbacktest/Stocks-Daily-Price",
+    "config": null,
+    "purpose": "Séries históricas diárias de ações para contexto de mercado global.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 300000,
+        "original_rows": 25287029,
+        "columns": [
+          "symbol",
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "adj_close"
+        ],
+        "output_file": "data/hf/paperswithbacktest__Stocks-Daily-Price/train.parquet"
+      }
+    ]
+  }
+]

@@ -1,0 +1,126 @@
+[
+  {
+    "dataset_id": "atrost/financial_phrasebank",
+    "config": null,
+    "purpose": "Sentimento financeiro com splits prontos.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 3100,
+        "original_rows": 3100,
+        "columns": [
+          "sentence",
+          "label"
+        ],
+        "output_file": "data/hf/atrost__financial_phrasebank/train.parquet"
+      },
+      {
+        "split": "validation",
+        "rows": 776,
+        "original_rows": 776,
+        "columns": [
+          "sentence",
+          "label"
+        ],
+        "output_file": "data/hf/atrost__financial_phrasebank/validation.parquet"
+      },
+      {
+        "split": "test",
+        "rows": 970,
+        "original_rows": 970,
+        "columns": [
+          "sentence",
+          "label"
+        ],
+        "output_file": "data/hf/atrost__financial_phrasebank/test.parquet"
+      }
+    ]
+  },
+  {
+    "dataset_id": "virattt/financial-qa-10K",
+    "config": null,
+    "purpose": "Q&A financeiro de alta cobertura para respostas do assistente.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 7000,
+        "original_rows": 7000,
+        "columns": [
+          "question",
+          "answer",
+          "context",
+          "ticker",
+          "filing"
+        ],
+        "output_file": "data/hf/virattt__financial-qa-10K/train.parquet"
+      }
+    ]
+  },
+  {
+    "dataset_id": "OpenFinAL/Financial_Question_Answering",
+    "config": null,
+    "purpose": "Conversas e FAQ financeiro para tom de atendimento.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 1140,
+        "original_rows": 1140,
+        "columns": [
+          "Question",
+          "Answer"
+        ],
+        "output_file": "data/hf/OpenFinAL__Financial_Question_Answering/train.parquet"
+      }
+    ]
+  },
+  {
+    "dataset_id": "zeroshot/twitter-financial-news-sentiment",
+    "config": null,
+    "purpose": "Sentimento de notícias financeiras em linguagem de mercado.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 9543,
+        "original_rows": 9543,
+        "columns": [
+          "text",
+          "label"
+        ],
+        "output_file": "data/hf/zeroshot__twitter-financial-news-sentiment/train.parquet"
+      },
+      {
+        "split": "validation",
+        "rows": 2388,
+        "original_rows": 2388,
+        "columns": [
+          "text",
+          "label"
+        ],
+        "output_file": "data/hf/zeroshot__twitter-financial-news-sentiment/validation.parquet"
+      }
+    ]
+  },
+  {
+    "dataset_id": "paperswithbacktest/Stocks-Daily-Price",
+    "config": null,
+    "purpose": "Série histórica diária de ações para contexto de mercado global.",
+    "splits": [
+      {
+        "split": "train",
+        "rows": 300000,
+        "original_rows": 25287029,
+        "columns": [
+          "symbol",
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "adj_close"
+        ],
+        "output_file": "data/hf/paperswithbacktest__Stocks-Daily-Price/train.parquet"
+      }
+    ]
+  }
+]

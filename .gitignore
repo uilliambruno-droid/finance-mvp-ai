@@ -1,0 +1,30 @@
+# Dependências e ambiente virtual
+venv/
+env/
+.venv
+*.egg-info/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dados sensíveis
+*.csv
+!data/*.csv
+
+# LangSmith e logs
+.langsmith/
+.langchain_cache/
+*.log

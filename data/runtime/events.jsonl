@@ -1,0 +1,62 @@
+{"timestamp": "2026-05-11T20:06:44Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 7}}
+{"timestamp": "2026-05-11T20:06:44Z", "event": "profile_updated", "payload": {"fields": ["nome"]}}
+{"timestamp": "2026-05-11T20:06:45Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:07:11Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 35}}
+{"timestamp": "2026-05-11T20:07:11Z", "event": "profile_updated", "payload": {"fields": ["objetivo_principal"]}}
+{"timestamp": "2026-05-11T20:07:13Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:07:48Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 19}}
+{"timestamp": "2026-05-11T20:07:48Z", "event": "profile_updated", "payload": {"fields": ["objetivo_principal"]}}
+{"timestamp": "2026-05-11T20:07:49Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:17:07Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:17:54Z", "event": "profile_form_submitted", "payload": {"fields": ["nome", "renda_mensal", "fonte_renda", "sem_renda", "desempregado", "perfil_investidor", "aceita_risco", "objetivo_principal", "gastos_mensais", "tem_gastos", "perfil_pronto", "observacoes"]}}
+{"timestamp": "2026-05-11T20:18:16Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 34}}
+{"timestamp": "2026-05-11T20:18:18Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:18:46Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 51}}
+{"timestamp": "2026-05-11T20:18:48Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:19:19Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 15}}
+{"timestamp": "2026-05-11T20:19:20Z", "event": "groq_rate_limited", "payload": {}}
+{"timestamp": "2026-05-11T20:19:20Z", "event": "answer_source", "payload": {"source": "fallback"}}
+{"timestamp": "2026-05-11T20:34:57Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:35:03Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:35:11Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:35:41Z", "event": "profile_form_submitted", "payload": {"fields": ["nome", "renda_mensal", "fonte_renda", "sem_renda", "desempregado", "perfil_investidor", "aceita_risco", "objetivo_principal", "gastos_mensais", "tem_gastos", "perfil_pronto", "observacoes"]}}
+{"timestamp": "2026-05-11T20:35:56Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 25}}
+{"timestamp": "2026-05-11T20:35:56Z", "event": "profile_updated", "payload": {"fields": ["objetivo_principal"]}}
+{"timestamp": "2026-05-11T20:35:57Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:37:00Z", "event": "state_restored", "payload": {"messages": 3}}
+{"timestamp": "2026-05-11T20:39:27Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 52}}
+{"timestamp": "2026-05-11T20:39:28Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:39:43Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 30}}
+{"timestamp": "2026-05-11T20:39:43Z", "event": "groq_rate_limited", "payload": {}}
+{"timestamp": "2026-05-11T20:39:43Z", "event": "answer_source", "payload": {"source": "fallback"}}
+{"timestamp": "2026-05-11T20:40:40Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:40:45Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:40:58Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:41:02Z", "event": "state_restored", "payload": {"messages": 7}}
+{"timestamp": "2026-05-11T20:41:20Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 44}}
+{"timestamp": "2026-05-11T20:41:22Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:41:36Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 11}}
+{"timestamp": "2026-05-11T20:41:36Z", "event": "groq_rate_limited", "payload": {}}
+{"timestamp": "2026-05-11T20:41:36Z", "event": "answer_source", "payload": {"source": "fallback"}}
+{"timestamp": "2026-05-11T20:41:54Z", "event": "profile_form_submitted", "payload": {"fields": ["nome", "renda_mensal", "fonte_renda", "sem_renda", "desempregado", "perfil_investidor", "aceita_risco", "objetivo_principal", "gastos_mensais", "tem_gastos", "perfil_pronto", "observacoes"]}}
+{"timestamp": "2026-05-11T20:42:16Z", "event": "feedback_submitted", "payload": {"message_index": 0, "vote": "positive", "rating": 3, "comment": ""}}
+{"timestamp": "2026-05-11T20:42:28Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 44}}
+{"timestamp": "2026-05-11T20:42:28Z", "event": "profile_updated", "payload": {"fields": ["objetivo_principal"]}}
+{"timestamp": "2026-05-11T20:42:30Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:50:06Z", "event": "state_restored", "payload": {"messages": 3}}
+{"timestamp": "2026-05-11T20:52:02Z", "event": "profile_form_submitted", "payload": {"fields": ["nome", "renda_mensal", "fonte_renda", "sem_renda", "desempregado", "perfil_investidor", "aceita_risco", "objetivo_principal", "patrimonio_atual", "meta_patrimonial", "gastos_mensais", "tem_gastos", "perfil_pronto", "observacoes"]}}
+{"timestamp": "2026-05-11T20:55:52Z", "event": "state_restored", "payload": {"messages": 1}}
+{"timestamp": "2026-05-11T20:56:54Z", "event": "profile_form_submitted", "payload": {"fields": ["nome", "renda_mensal", "fonte_renda", "sem_renda", "desempregado", "perfil_investidor", "aceita_risco", "patrimonio_atual", "meta_patrimonial", "prazo_meta_meses", "gastos_mensais", "tem_gastos", "perfil_pronto", "observacoes"]}}
+{"timestamp": "2026-05-11T20:57:21Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 49}}
+{"timestamp": "2026-05-11T20:57:22Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:57:35Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 16}}
+{"timestamp": "2026-05-11T20:57:36Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:57:58Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 47}}
+{"timestamp": "2026-05-11T20:57:58Z", "event": "groq_rate_limited", "payload": {}}
+{"timestamp": "2026-05-11T20:57:58Z", "event": "answer_source", "payload": {"source": "fallback"}}
+{"timestamp": "2026-05-11T20:58:20Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 37}}
+{"timestamp": "2026-05-11T20:58:20Z", "event": "transaction_recorded", "payload": {"data": "2026-05-12", "valor": 30.0, "categoria": "geral", "tipo": "entrada"}}
+{"timestamp": "2026-05-11T20:58:21Z", "event": "answer_source", "payload": {"source": "groq"}}
+{"timestamp": "2026-05-11T20:58:52Z", "event": "user_message_received", "payload": {"language": "pt", "chat_mode": "guided", "message_length": 3}}
+{"timestamp": "2026-05-11T20:58:53Z", "event": "groq_rate_limited", "payload": {}}
+{"timestamp": "2026-05-11T20:58:53Z", "event": "answer_source", "payload": {"source": "fallback"}}

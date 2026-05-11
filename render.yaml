@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pluto-finance-ai
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false          # você define no painel do Render
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: ENVIRONMENT
+        value: production
+    plan: free

@@ -1,0 +1,30 @@
+{
+  "selic": {
+    "descricao": "A Selic é a taxa básica de juros da economia brasileira e serve como referência para vários investimentos de renda fixa.",
+    "uso_pratico": "Tesouro Selic e muitos CDBs pós-fixados acompanham CDI/Selic de forma parcial ou total."
+  },
+  "tesouro_direto": {
+    "tesouro_selic": "Título público focado em liquidez e baixa volatilidade para reserva de emergência.",
+    "tesouro_ipca": "Protege contra inflação no longo prazo, mas pode oscilar por marcação a mercado no curto prazo.",
+    "tesouro_prefixado": "Tem taxa definida na compra; se vender antes do vencimento pode ter ganho ou perda."
+  },
+  "taxacao_brasil": {
+    "renda_fixa_regressiva_ir": [
+      "Até 180 dias: 22,5%",
+      "181 a 360 dias: 20%",
+      "361 a 720 dias: 17,5%",
+      "Acima de 720 dias: 15%"
+    ],
+    "iof": "Incide em resgates de renda fixa com prazo inferior a 30 dias, com alíquota regressiva.",
+    "lci_lca": "Geralmente isentas de IR para pessoa física no Brasil (conferir regras vigentes).",
+    "etf_br": "Em ETFs listados no Brasil, ganhos em venda são tributáveis via DARF, com regras específicas por tipo de ETF.",
+    "acao_br": "Ganho em venda de ações pode gerar IR e deve ser apurado pelo investidor conforme regras vigentes.",
+    "cripto": "Ganhos com cripto podem ser tributáveis. Regras mudam com frequência; validar norma atual da Receita Federal."
+  },
+  "taxacao_internacional": {
+    "stocks_etfs_us": "Para residente fiscal no Brasil investindo no exterior, normalmente há incidência de imposto sobre ganho de capital e necessidade de declaração local.",
+    "dividendos_exterior": "Dividendos recebidos no exterior podem exigir apuração e declaração conforme legislação vigente no país de residência fiscal.",
+    "aviso": "Regras tributárias podem mudar e dependem do país de residência fiscal do investidor."
+  },
+  "aviso_legal": "Conteúdo educacional. Não substitui orientação de contador, planejador financeiro ou assessor autorizado."
+}

@@ -1,0 +1,21 @@
+{
+  "dataset_id": "zongowo111/v2-crypto-ohlcv-data",
+  "split": "train[:200000]",
+  "rows": 200000,
+  "columns": [
+    "open_time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "volume",
+    "close_time",
+    "quote_asset_volume",
+    "number_of_trades",
+    "taker_buy_base_asset_volume",
+    "taker_buy_quote_asset_volume",
+    "ignore"
+  ],
+  "output_file": "data/hf/zongowo111__v2-crypto-ohlcv-data/train_200k.parquet",
+  "purpose": "Recorte de OHLCV cripto para contexto de mercado e análise de risco."
+}

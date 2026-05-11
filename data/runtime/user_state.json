@@ -1,0 +1,74 @@
+{
+  "language": "pt",
+  "chat_mode": "guided",
+  "user_profile": {
+    "nome": "Uilliam",
+    "renda_mensal": 5000.0,
+    "fonte_renda": "Drogas",
+    "sem_renda": false,
+    "desempregado": false,
+    "perfil_investidor": "Arrojado",
+    "aceita_risco": true,
+    "patrimonio_atual": 10030.0,
+    "meta_patrimonial": 100000000.0,
+    "prazo_meta_meses": 12,
+    "gastos_mensais": 3000.0,
+    "tem_gastos": true,
+    "perfil_pronto": true,
+    "observacoes": "Vou fazer o impossivel pra alcancar isso"
+  },
+  "messages": [
+    {
+      "role": "assistant",
+      "content": "Olá, Uilliam! Perfil configurado. Agora posso falar como seu consultor financeiro — direto ao ponto, sem rodeios.\n\nPerfil de investidor anotado: **Arrojado**. Vou calibrar as recomendações de acordo.\n\nCom **R$ 5,000/mês** disponível, dá pra trabalhar bem. Vamos aproveitar isso.\n\nO que você quer resolver primeiro?"
+    },
+    {
+      "role": "user",
+      "content": "voce viu meu perfil? o que tem a dizer sobre ele?"
+    },
+    {
+      "role": "assistant",
+      "content": "Uilliam, sim, viu!\n\nUm \"Arrojado\" é aquele investidor que busca ganhos mais altos, pronto para assumir riscos. Vamos aproveitar isso, então!\n\nVale notar, contudo, que com **R$ 10,000,00** como patrimônio atual e uma meta de **R$ 100,000,000,00** em 12 meses, temos uma meta ambiciosa. **R$ 833,2500.00** por mês seria o aporte necessário para alcançar isso. É um desafio!\n\nVocê está preparado para fazer o necessário para alcançar esses objetivos?"
+    },
+    {
+      "role": "user",
+      "content": "sim, vamos lah!!"
+    },
+    {
+      "role": "assistant",
+      "content": "Uilliam, você está pronto para começar a batalha financeira!\n\nVamos focar em algumas coisas importantes:\n\n1. **Renda fixa**: vamos começar com uma base sólida de renda fixa para estabilizar os investimentos. Vou recomendar alguns produtos.\n2. **Risco**: dado seu perfil de investidor, vamos explorar opções com um pouco mais de risco, mas que também possam oferecer retornos mais altos.\n3. **Diversificação**: vamos diversificar os investimentos para minimizar o risco e maximizar os retornos.\n\nAqui vão algumas sugestões iniciais:\n\n**Renda Fixa**:\n\n* **Tesouro Selic**: é uma opção segura e com baixo risco. Pode oferecer retornos modestos, mas é uma boa base para começar.\n* **Tesouro IPCA+**: é outro investimento de baixo risco, mas pode oferecer retornos um pouco mais altos do que o Tesouro Selic.\n\n**Risco Moderado**:\n\n* **CDB Liquidez Diária**: é um investimento com um pouco mais de risco, mas pode oferecer retornos mais altos do que os investimentos de renda fixa.\n* **LCI/LCA**: é outro investimento com um pouco mais de risco, mas pode oferecer retornos mais altos do que os investimentos de renda fixa.\n\n**Diversificação**:\n\n* **Fundo Multimercado**: é um fundo que investe em uma variedade de ativos, incluindo ações, títulos e outros investimentos. Pode oferecer retornos mais altos, mas também pode ter um pouco mais de risco.\n* **ETF S&P 500**: é um fundo que investe em ações de empresas líderes do S&P 500. Pode oferecer retornos mais altos, mas também pode ter um pouco mais de risco.\n\nQual dessas opções você gostaria de explorar primeiro?"
+    },
+    {
+      "role": "user",
+      "content": "o que for necessario pra eu alcancar minha meta"
+    },
+    {
+      "role": "assistant",
+      "content": "Estou sem conexão com o modelo neste momento, mas posso continuar com você. Me diga o que quer analisar e eu sigo com o que já tenho.\n\n⚠️ O limite de consultas neste momento foi atingido. Tente novamente daqui a pouco ou entre em contato com o desenvolvedor para um plano com mais requisições."
+    },
+    {
+      "role": "user",
+      "content": "ganhei dinheiro no bingo 30 mil reais"
+    },
+    {
+      "role": "assistant",
+      "content": "Uilliam, é incrível!\n\nAgora, vamos analisar como podemos utilizar essa quantia para alcançar sua meta de R$ 100.000.000,00 em 12 meses.\n\nCom o aporte de R$ 30.000,00, sua nova meta de patrimônio atual é de R$ 40.000,00 (R$ 10.000,00 original + R$ 30.000,00 do bingo).\n\nPara alcançar sua meta, precisamos calcular o aporte mensal necessário:\n\n**Meta de patrimônio**: R$ 100.000.000,00\n**Prazo**: 12 meses\n**Valor atual**: R$ 40.000,00\n\nAgora, vamos calcular o aporte mensal necessário:\n\n**Aporte mensal**: (R$ 100.000.000,00 - R$ 40.000,00) / 12 meses = R$ 8.333.333,33 por mês\n\nVocê precisa de R$ 8.333.333,33 por mês para alcançar sua meta em 12 meses. Com o aporte adicional de R$ 30.000,00, sua meta de aporte mensal reduziu para R$ 8.300.333,33.\n\nVamos revisar a estratégia de investimento e ver como podemos utilizar essa quantia para alcançar sua meta.\n\n**Recomendação**:\n\n* Continuamos com a estratégia de diversificação, mas vamos aumentar a participação de ativos com mais risco, como ações e fundos de investimento.\n* Vamos investir R$ 5.000,00 por mês em renda fixa para estabilizar os investimentos.\n* Vamos investir R$ 3.300,00 por mês em ações e fundos de investimento para aumentar os retornos.\n\nVamos seguir com essa estratégia e ver como podemos alcançar sua meta?\n\n**Risco**:\n\n* A estratégia de investimento apresentada envolve ativos com mais risco, como ações e fundos de investimento. É importante lembrar que o risco é sempre associado a possíveis perdas.\n\nVocê está confortável com essa estratégia?"
+    },
+    {
+      "role": "user",
+      "content": "sim"
+    },
+    {
+      "role": "assistant",
+      "content": "Estou sem conexão com o modelo neste momento, mas posso continuar com você. Me diga o que quer analisar e eu sigo com o que já tenho.\n\n⚠️ O limite de consultas neste momento foi atingido. Tente novamente daqui a pouco ou entre em contato com o desenvolvedor para um plano com mais requisições."
+    }
+  ],
+  "user_transactions": [
+    {
+      "data": "2026-05-12 00:00:00",
+      "valor": 30.0,
+      "categoria": "geral",
+      "tipo": "entrada"
+    }
+  ]
+}

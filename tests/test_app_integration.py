@@ -14,7 +14,6 @@ import app  # noqa: E402
 def test_next_natural_question_guided_and_quick() -> None:
     profile = {
         "nome": "",
-        "objetivo_principal": "",
         "fonte_renda": "",
         "sem_renda": False,
         "renda_mensal": None,
@@ -66,15 +65,16 @@ def test_apply_profile_form_submission_and_ready_state() -> None:
         investor_style="Moderado",
         spending=2500.0,
         has_spending=True,
-        goal="reserva de emergência",
         current_wealth=15000.0,
         target_wealth=50000.0,
+        target_deadline_months=36,
         notes="",
     )
 
     assert profile["nome"] == "Uilliam"
     assert profile["patrimonio_atual"] == 15000.0
     assert profile["meta_patrimonial"] == 50000.0
+    assert profile["prazo_meta_meses"] == 36
     assert profile["perfil_pronto"] is True
     assert app.profile_is_ready(profile) is True
 
@@ -89,6 +89,11 @@ def test_goal_progress_calculation() -> None:
     assert current == 25000.0
     assert target == 100000.0
     assert progress == 25
+
+
+def test_format_goal_timeline_automatic_scale() -> None:
+    assert app.format_goal_timeline(18, "pt") == "18 meses"
+    assert app.format_goal_timeline(36, "pt") == "3 anos (36 meses)"
 
 
 class DummyState:

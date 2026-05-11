@@ -71,10 +71,12 @@ TEXTS = {
         "intake_profile_aggressive": "Arrojado",
         "intake_spending": "Gastos mensais aproximados (R$)",
         "intake_has_spending": "Tenho gastos fixos / consumo recorrente",
-        "intake_goal": "Objetivo principal",
         "intake_current_wealth": "Patrimônio atual (R$)",
         "intake_target_wealth": "Meta patrimonial (R$)",
+        "intake_target_deadline_months": "Prazo da meta (meses)",
         "intake_goal_progress": "Progresso da meta",
+        "intake_target_deadline_label": "Prazo",
+        "intake_target_monthly_needed_label": "Aporte mensal necessário",
         "wealth_current_label": "Patrimônio",
         "wealth_target_label": "Meta",
         "wealth_missing_label": "Falta",
@@ -82,7 +84,8 @@ TEXTS = {
         "intake_notes": "Observações opcionais",
         "intake_ready_title": "Perfil carregado",
         "intake_ready_caption": "Agora o chat está liberado com seu contexto. O Pluto já sabe o básico e pode ir direto para a consultoria.",
-        "intake_missing_warning": "Preencha pelo menos nome, renda ou situação de renda, estilo e objetivo para liberar o chat.",
+        "intake_missing_warning": "Preencha pelo menos nome, renda ou situação de renda e estilo para liberar o chat.",
+        "intake_deadline_warning": "Defina um prazo em meses para sua meta patrimonial.",
         "consultant_welcome": "Perfeito. Agora eu tenho seu perfil e posso falar como consultor financeiro, sem enrolação.",
         "chat_locked": "Antes de liberar o chat, preciso de um perfil mínimo para personalizar as respostas.",
         "welcome": "Oi! Eu sou o Pluto 🪐 Qual é o seu nome?",
@@ -145,10 +148,12 @@ TEXTS = {
         "intake_profile_aggressive": "Aggressive",
         "intake_spending": "Approximate monthly expenses (R$)",
         "intake_has_spending": "I have fixed expenses / recurring spending",
-        "intake_goal": "Main goal",
         "intake_current_wealth": "Current net worth (R$)",
         "intake_target_wealth": "Target net worth (R$)",
+        "intake_target_deadline_months": "Target deadline (months)",
         "intake_goal_progress": "Goal progress",
+        "intake_target_deadline_label": "Deadline",
+        "intake_target_monthly_needed_label": "Required monthly contribution",
         "wealth_current_label": "Net worth",
         "wealth_target_label": "Target",
         "wealth_missing_label": "Missing",
@@ -156,7 +161,8 @@ TEXTS = {
         "intake_notes": "Optional notes",
         "intake_ready_title": "Profile loaded",
         "intake_ready_caption": "Chat is now unlocked with your context. Pluto already knows the basics and can jump straight into consulting.",
-        "intake_missing_warning": "Fill at least name, income or income status, style and goal to unlock chat.",
+        "intake_missing_warning": "Fill at least name, income or income status, and style to unlock chat.",
+        "intake_deadline_warning": "Set a deadline in months for your net worth target.",
         "consultant_welcome": "Perfect. I have your profile now and can speak like a financial consultant, no fluff.",
         "chat_locked": "Before I unlock chat, I need a minimal profile so I can personalize the answers.",
         "welcome": "Hi! I’m Pluto 🪐 What is your name?",
@@ -275,9 +281,9 @@ def default_user_profile() -> dict[str, Any]:
         "desempregado": False,
         "perfil_investidor": "",
         "aceita_risco": None,
-        "objetivo_principal": "",
         "patrimonio_atual": None,
         "meta_patrimonial": None,
+        "prazo_meta_meses": None,
         "gastos_mensais": None,
         "tem_gastos": None,
         "perfil_pronto": False,
@@ -297,7 +303,6 @@ def profile_is_ready(profile: dict[str, Any]) -> bool:
         profile.get("nome")
         and has_income
         and profile.get("perfil_investidor")
-        and profile.get("objetivo_principal")
         and profile.get("perfil_pronto")
     )
 
@@ -310,9 +315,9 @@ def apply_profile_form_submission(
     investor_style: str,
     spending: float | None,
     has_spending: bool,
-    goal: str,
     current_wealth: float | None,
     target_wealth: float | None,
+    target_deadline_months: int | None,
     notes: str,
 ) -> dict[str, Any]:
     profile = default_user_profile()
@@ -325,9 +330,9 @@ def apply_profile_form_submission(
     profile["aceita_risco"] = investor_style != "Conservador"
     profile["gastos_mensais"] = spending
     profile["tem_gastos"] = has_spending
-    profile["objetivo_principal"] = goal.strip()
     profile["patrimonio_atual"] = current_wealth
     profile["meta_patrimonial"] = target_wealth
+    profile["prazo_meta_meses"] = target_deadline_months
     profile["observacoes"] = notes.strip()
     profile["perfil_pronto"] = True
     return profile
@@ -344,6 +349,20 @@ def goal_progress(profile: dict[str, Any]) -> tuple[float | None, float | None, 
         return current_value, target_value, 0
     progress = int(min(100, max(0, round((current_value / target_value) * 100))))
     return current_value, target_value, progress
+
+
+def format_goal_timeline(months: int | None, language: str) -> str:
+    if not months or months <= 0:
+        return "—"
+    if months < 24:
+        return f"{months} meses" if language == "pt" else f"{months} months"
+    years = months / 12
+    years_label = f"{years:.1f}" if years % 1 else f"{int(years)}"
+    return (
+        f"{years_label} anos ({months} meses)"
+        if language == "pt"
+        else f"{years_label} years ({months} months)"
+    )
 
 
 def log_event(event_name: str, payload: dict[str, Any] | None = None) -> None:
@@ -624,9 +643,9 @@ def build_context(
             "desempregado": profile.get("desempregado"),
             "perfil_investidor": profile.get("perfil_investidor"),
             "aceita_risco": profile.get("aceita_risco"),
-            "objetivo_principal": profile.get("objetivo_principal"),
             "patrimonio_atual": profile.get("patrimonio_atual"),
             "meta_patrimonial": profile.get("meta_patrimonial"),
+            "prazo_meta_meses": profile.get("prazo_meta_meses"),
             "valor_faltante_meta": (
                 max(
                     float(profile.get("meta_patrimonial") or 0.0)
@@ -634,6 +653,20 @@ def build_context(
                     0.0,
                 )
                 if profile.get("meta_patrimonial") not in (None, "")
+                else None
+            ),
+            "aporte_mensal_necessario": (
+                round(
+                    max(
+                        float(profile.get("meta_patrimonial") or 0.0)
+                        - float(profile.get("patrimonio_atual") or 0.0),
+                        0.0,
+                    )
+                    / float(profile.get("prazo_meta_meses") or 1),
+                    2,
+                )
+                if profile.get("meta_patrimonial") not in (None, "")
+                and profile.get("prazo_meta_meses") not in (None, "", 0)
                 else None
             ),
             "observacoes": profile.get("observacoes", ""),
@@ -811,12 +844,6 @@ def extract_profile_updates(user_text: str, profile: dict[str, Any]) -> dict[str
     elif any(term in lower for term in ["negócio", "negocio", "business"]):
         updates["fonte_renda"] = "negócio próprio"
 
-    goal_match = re.search(
-        r"(?:quero|meu objetivo é|my goal is|i want to)\s+(.+)", text, re.I
-    )
-    if goal_match:
-        updates["objetivo_principal"] = goal_match.group(1).strip().rstrip(".?!")
-
     if any(
         term in lower
         for term in ["conservador", "conservative", "baixo risco", "low risk"]
@@ -843,9 +870,9 @@ def format_profile_summary(profile: dict[str, Any], language: str) -> str:
             "renda_mensal": "Renda",
             "sem_renda": "Status",
             "perfil_investidor": "Perfil",
-            "objetivo_principal": "Objetivo",
             "patrimonio_atual": "Patrimônio",
             "meta_patrimonial": "Meta",
+            "prazo_meta_meses": "Prazo",
         },
         "en": {
             "nome": "Name",
@@ -853,9 +880,9 @@ def format_profile_summary(profile: dict[str, Any], language: str) -> str:
             "renda_mensal": "Income",
             "sem_renda": "Status",
             "perfil_investidor": "Profile",
-            "objetivo_principal": "Goal",
             "patrimonio_atual": "Net worth",
             "meta_patrimonial": "Target",
+            "prazo_meta_meses": "Deadline",
         },
     }
 
@@ -866,9 +893,9 @@ def format_profile_summary(profile: dict[str, Any], language: str) -> str:
         "renda_mensal",
         "sem_renda",
         "perfil_investidor",
-        "objetivo_principal",
         "patrimonio_atual",
         "meta_patrimonial",
+        "prazo_meta_meses",
     ]:
         value = profile.get(key)
         if value in (None, "", []):
@@ -878,6 +905,8 @@ def format_profile_summary(profile: dict[str, Any], language: str) -> str:
             parts.append(f"{label}: {value:,.2f}")
         elif key in {"patrimonio_atual", "meta_patrimonial"}:
             parts.append(f"{label}: {float(value):,.2f}")
+        elif key == "prazo_meta_meses":
+            parts.append(f"{label}: {format_goal_timeline(int(value), language)}")
         elif key == "sem_renda" and value:
             parts.append(f"{label}: {'sem renda' if language == 'pt' else 'no income'}")
         elif key != "sem_renda":
@@ -887,8 +916,6 @@ def format_profile_summary(profile: dict[str, Any], language: str) -> str:
 
 def profile_completion(profile: dict[str, Any]) -> int:
     score = 0
-    if profile.get("objetivo_principal"):
-        score += 1
     if profile.get("fonte_renda") or profile.get("sem_renda"):
         score += 1
     if profile.get("renda_mensal") not in (None, "") or profile.get("sem_renda"):
@@ -898,6 +925,8 @@ def profile_completion(profile: dict[str, Any]) -> int:
     if profile.get("patrimonio_atual") not in (None, ""):
         score += 1
     if profile.get("meta_patrimonial") not in (None, ""):
+        score += 1
+    if profile.get("prazo_meta_meses") not in (None, ""):
         score += 1
     return int((score / 6) * 100)
 
@@ -911,9 +940,9 @@ def format_update_fields(profile_updates: dict[str, Any], language: str) -> str:
             "sem_renda": "status de renda",
             "desempregado": "situação profissional",
             "perfil_investidor": "perfil",
-            "objetivo_principal": "objetivo",
             "patrimonio_atual": "patrimônio",
             "meta_patrimonial": "meta",
+            "prazo_meta_meses": "prazo da meta",
         },
         "en": {
             "nome": "name",
@@ -922,9 +951,9 @@ def format_update_fields(profile_updates: dict[str, Any], language: str) -> str:
             "sem_renda": "income status",
             "desempregado": "work status",
             "perfil_investidor": "profile",
-            "objetivo_principal": "goal",
             "patrimonio_atual": "net worth",
             "meta_patrimonial": "target",
+            "prazo_meta_meses": "target deadline",
         },
     }
     return ", ".join(labels[language].get(key, key) for key in profile_updates.keys())
@@ -939,7 +968,6 @@ def next_natural_question(
 def build_consultant_welcome(profile: dict[str, Any], language: str) -> str:
     """Build a personalised welcome that acknowledges the user's profile."""
     name = profile.get("nome", "")
-    goal = profile.get("objetivo_principal", "")
     investor = profile.get("perfil_investidor", "")
     renda = profile.get("renda_mensal")
     sem_renda = profile.get("sem_renda", False)
@@ -950,10 +978,6 @@ def build_consultant_welcome(profile: dict[str, Any], language: str) -> str:
             greeting
             + "Your profile is set. I'm ready to act as your personal financial consultant — no fluff."
         ]
-        if goal:
-            lines.append(
-                f"Your main goal: **{goal}**. That's where we'll keep our focus."
-            )
         if investor:
             lines.append(
                 f"Investor style noted: **{investor}**. I'll calibrate my recommendations accordingly."
@@ -974,8 +998,6 @@ def build_consultant_welcome(profile: dict[str, Any], language: str) -> str:
         greeting
         + "Perfil configurado. Agora posso falar como seu consultor financeiro — direto ao ponto, sem rodeios."
     ]
-    if goal:
-        lines.append(f"Seu objetivo principal: **{goal}**. É nisso que vamos focar.")
     if investor:
         lines.append(
             f"Perfil de investidor anotado: **{investor}**. Vou calibrar as recomendações de acordo."
@@ -1302,13 +1324,7 @@ def main() -> None:
                     spending = 0.0
 
             st.markdown("---")
-            st.markdown("#### Objetivo e Meta")
-            goal = st.text_area(
-                texts["intake_goal"] + " *",
-                value=st.session_state.user_profile.get("objetivo_principal", ""),
-                height=90,
-                placeholder="Ex: montar reserva de emergência, quitar dívidas, investir para aposentadoria…",
-            )
+            st.markdown("#### Meta patrimonial")
             wealth_col1, wealth_col2 = st.columns(2)
             with wealth_col1:
                 current_wealth = st.number_input(
@@ -1330,6 +1346,17 @@ def main() -> None:
                     step=1000.0,
                     format="%.2f",
                 )
+            target_deadline_months = int(
+                st.number_input(
+                    texts["intake_target_deadline_months"],
+                    min_value=1,
+                    value=int(
+                        st.session_state.user_profile.get("prazo_meta_meses") or 24
+                    ),
+                    step=1,
+                    format="%d",
+                )
+            )
             notes = st.text_area(
                 texts["intake_notes"],
                 value=st.session_state.user_profile.get("observacoes", ""),
@@ -1352,17 +1379,19 @@ def main() -> None:
                 investor_style=style_lookup[investor_style_label],
                 spending=spending if has_spending else None,
                 has_spending=has_spending,
-                goal=goal,
                 current_wealth=current_wealth if current_wealth > 0 else None,
                 target_wealth=target_wealth if target_wealth > 0 else None,
+                target_deadline_months=(
+                    target_deadline_months if target_wealth > 0 else None
+                ),
                 notes=notes,
             )
-            if (
-                not stored_profile["nome"]
-                or not stored_profile["perfil_investidor"]
-                or not stored_profile["objetivo_principal"]
-            ):
+            if not stored_profile["nome"] or not stored_profile["perfil_investidor"]:
                 st.warning(texts["intake_missing_warning"])
+            elif stored_profile["meta_patrimonial"] and not stored_profile.get(
+                "prazo_meta_meses"
+            ):
+                st.warning(texts["intake_deadline_warning"])
             else:
                 if (
                     not stored_profile["renda_mensal"]
@@ -1394,7 +1423,6 @@ def main() -> None:
     profile = st.session_state.user_profile
     _name = profile.get("nome", "—")
     _style = profile.get("perfil_investidor", "—")
-    _goal = profile.get("objetivo_principal", "—")
     _renda_raw = profile.get("renda_mensal")
     _sem_renda = profile.get("sem_renda", False)
     if _sem_renda or not _renda_raw:
@@ -1404,9 +1432,15 @@ def main() -> None:
     _gastos_raw = profile.get("gastos_mensais")
     _gastos_str = f"R$ {float(_gastos_raw):,.0f}/mês" if _gastos_raw else "—"
     _current_wealth, _target_wealth, _goal_progress = goal_progress(profile)
+    _deadline_months = profile.get("prazo_meta_meses")
+    _deadline_str = format_goal_timeline(_deadline_months, language)
     _missing = None
+    _monthly_needed = None
+    _monthly_suffix = "/mês" if language == "pt" else "/mo"
     if _current_wealth is not None and _target_wealth is not None:
         _missing = max(_target_wealth - _current_wealth, 0.0)
+        if _deadline_months not in (None, "", 0):
+            _monthly_needed = _missing / float(_deadline_months)
     _bar_w = completion
     _txn_count = transaction_count
     _inter_count = interaction_count
@@ -1441,9 +1475,13 @@ def main() -> None:
                         <div style="color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;">{texts['wealth_missing_label']}</div>
                         <div style="color:#f1f5f9;font-weight:600;font-size:.95rem;">{(f'R$ {_missing:,.0f}' if _missing is not None else '—')}</div>
                     </div>
-          <div style="flex:2 1 200px;">
-            <div style="color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;">Objetivo</div>
-            <div style="color:#f1f5f9;font-size:.88rem;">{_goal[:60]}{"…" if len(_goal) > 60 else ""}</div>
+                    <div style="flex:1 1 180px;">
+                        <div style="color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;">{texts['intake_target_deadline_label']}</div>
+                        <div style="color:#f1f5f9;font-weight:600;font-size:.95rem;">{_deadline_str}</div>
+                    </div>
+                    <div style="flex:1 1 180px;">
+                        <div style="color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;">{texts['intake_target_monthly_needed_label']}</div>
+                        <div style="color:#f1f5f9;font-weight:600;font-size:.95rem;">{(f'R$ {_monthly_needed:,.0f}{_monthly_suffix}' if _monthly_needed is not None else '—')}</div>
           </div>
           <div style="flex:1 1 100px;text-align:right;">
                         <div style="color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;">{texts['intake_goal_progress']}</div>
@@ -1632,6 +1670,16 @@ def main() -> None:
             )
             st.session_state.user_transactions = pd.concat(
                 [st.session_state.user_transactions, txn_row], ignore_index=True
+            )
+            current_wealth_value = float(
+                st.session_state.user_profile.get("patrimonio_atual") or 0.0
+            )
+            if txn["tipo"] == "entrada":
+                current_wealth_value += float(txn["valor"])
+            else:
+                current_wealth_value -= float(txn["valor"])
+            st.session_state.user_profile["patrimonio_atual"] = max(
+                current_wealth_value, 0.0
             )
             log_event("transaction_recorded", txn)
             tipo_label = "Entrada" if txn["tipo"] == "entrada" else "Saída"

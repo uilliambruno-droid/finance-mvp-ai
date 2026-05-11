@@ -77,7 +77,7 @@ python -m pytest -q tests/
 
 ## Fluxo recomendado de uso
 
-1. Preencha perfil (nome, renda, estilo, objetivo, patrimônio atual e meta)
+1. Preencha perfil (nome, renda, estilo, patrimônio atual, meta e prazo em meses)
 2. Faça perguntas consultivas no chat
 3. Registre gastos/ganhos por linguagem natural
 4. Avalie respostas com feedback estruturado

@@ -122,3 +122,74 @@ def test_persistent_state_roundtrip(tmp_path: Path, monkeypatch) -> None:
     assert loaded.get("chat_mode") == "guided"
     assert loaded.get("language") == "pt"
     assert len(loaded.get("messages", [])) == 2
+
+
+def _make_ready_profile(**overrides) -> dict:
+    """Return a minimal profile that passes profile_is_ready."""
+    profile = app.apply_profile_form_submission(
+        name="Ana",
+        income=4000.0,
+        income_source="salário",
+        investor_style="Moderado",
+        spending=2000.0,
+        has_spending=True,
+        current_wealth=10000.0,
+        target_wealth=50000.0,
+        target_deadline_months=24,
+        notes="",
+    )
+    profile.update(overrides)
+    return profile
+
+
+def test_next_natural_question_quick_mode_always_empty() -> None:
+    profile = _make_ready_profile()
+    result = app.next_natural_question(
+        profile=profile, language="pt", has_transactions=False, chat_mode="quick"
+    )
+    assert result == ""
+
+
+def test_next_natural_question_guided_asks_income_source_when_missing() -> None:
+    profile = _make_ready_profile(fonte_renda="", sem_renda=False)
+    result = app.next_natural_question(
+        profile=profile, language="pt", has_transactions=False, chat_mode="guided"
+    )
+    assert result != ""
+    assert "renda" in result.lower()
+
+
+def test_next_natural_question_guided_asks_csv_when_no_transactions() -> None:
+    profile = _make_ready_profile(fonte_renda="salário")
+    result = app.next_natural_question(
+        profile=profile, language="pt", has_transactions=False, chat_mode="guided"
+    )
+    assert result != ""
+    assert "csv" in result.lower() or "dados" in result.lower()
+
+
+def test_next_natural_question_guided_asks_goal_when_transactions_exist() -> None:
+    profile = _make_ready_profile(fonte_renda="salário")
+    result = app.next_natural_question(
+        profile=profile, language="pt", has_transactions=True, chat_mode="guided"
+    )
+    assert result != ""
+    assert "objetivo" in result.lower()
+
+
+def test_next_natural_question_english_guided_uses_en_texts() -> None:
+    profile = _make_ready_profile(fonte_renda="salary")
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=True, chat_mode="guided"
+    )
+    assert result != ""
+    assert "goal" in result.lower() or "financial" in result.lower()
+
+
+def test_texts_pt_has_all_followup_keys() -> None:
+    pt = app.TEXTS["pt"]
+    en = app.TEXTS["en"]
+    followup_keys = [k for k in en if k.startswith("followup_")]
+    for key in followup_keys:
+        assert key in pt, f"TEXTS['pt'] is missing key: {key}"
+

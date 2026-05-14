@@ -133,6 +133,12 @@ TEXTS = {
         "unemployment_support": "Se você está desempregado ou sem renda agora, o foco primeiro não precisa ser investir. Posso te ajudar a organizar gastos essenciais, pensar em fontes de renda e montar um plano simples sem desanimar.",
         "no_income_prompt": "Nesse momento, vale priorizar caixa, gastos essenciais e caminhos para gerar renda antes de pensar em risco financeiro.",
         "updated_profile": "Anotei isso sobre você: {fields}.",
+        "followup_name": "Antes de continuar, qual é o seu nome?",
+        "followup_income_source": "Se quiser, pode me contar como a sua renda entra hoje: salário, freela, negócio próprio ou sem renda no momento.",
+        "followup_income_amount": "Se estiver confortável, o valor da sua renda mensal me ajuda a sugerir prioridades e metas mais realistas.",
+        "followup_profile": "Se quiser, posso adaptar as respostas ao seu estilo de risco — mais conservador, moderado ou arrojado.",
+        "followup_goal": "Se ajudar, me conta qual é o seu principal objetivo financeiro agora. Isso me ajuda a te orientar melhor.",
+        "followup_csv": "E se for mais fácil, você pode enviar um CSV com seus gastos aqui embaixo e eu analiso tudo a partir dos dados.",
     },
     "en": {
         "caption": "A conversational financial assistant designed to support each person at their own pace.",
@@ -962,7 +968,26 @@ def format_update_fields(profile_updates: dict[str, Any], language: str) -> str:
 def next_natural_question(
     profile: dict[str, Any], language: str, has_transactions: bool, chat_mode: str
 ) -> str:
-    return ""
+    """Return a context-aware follow-up question in guided chat mode.
+
+    Only fires when the profile is ready (intake form completed) and the chat
+    mode is ``"guided"``.  For quick mode or incomplete profiles this always
+    returns an empty string so the LLM answer is not disrupted.
+    """
+    if chat_mode != "guided":
+        return ""
+    if not profile_is_ready(profile):
+        return ""
+
+    texts = get_texts(language)
+
+    if not profile.get("fonte_renda") and not profile.get("sem_renda"):
+        return texts["followup_income_source"]
+
+    if not has_transactions:
+        return texts["followup_csv"]
+
+    return texts["followup_goal"]
 
 
 def build_consultant_welcome(profile: dict[str, Any], language: str) -> str:

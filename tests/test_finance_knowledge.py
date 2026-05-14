@@ -93,3 +93,7 @@ def test_extract_user_name_direct_answer() -> None:
 
 def test_extract_user_name_ignores_finance_phrase() -> None:
     assert extract_user_name("quero investir em ETF") is None
+
+
+def test_extract_user_name_ignores_greeting_oi() -> None:
+    assert extract_user_name("oi") is None

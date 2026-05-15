@@ -22,13 +22,13 @@ def test_next_natural_question_guided_and_quick() -> None:
 
     guided = app.next_natural_question(
         profile=profile,
-        language="pt",
+        language="en",
         has_transactions=False,
         chat_mode="guided",
     )
     quick = app.next_natural_question(
         profile=profile,
-        language="pt",
+        language="en",
         has_transactions=False,
         chat_mode="quick",
     )
@@ -47,22 +47,22 @@ def test_build_llm_messages_contains_brazil_scope() -> None:
     messages = app.build_llm_messages(
         system_prompt="test system",
         context="{}",
-        user_text="Quero investir",
+        user_text="I want to invest",
         conversation_messages=[],
-        language="pt",
+        language="en",
     )
     all_system_content = "\n".join(
         m["content"] for m in messages if m["role"] == "system"
     )
-    assert "Brasil-first" in all_system_content
+    assert "Brazil-first" in all_system_content
 
 
 def test_apply_profile_form_submission_and_ready_state() -> None:
     profile = app.apply_profile_form_submission(
         name="Uilliam",
         income=5000.0,
-        income_source="salário",
-        investor_style="Moderado",
+        income_source="salary",
+        investor_style="Moderate",
         spending=2500.0,
         has_spending=True,
         current_wealth=15000.0,
@@ -92,18 +92,18 @@ def test_goal_progress_calculation() -> None:
 
 
 def test_format_goal_timeline_automatic_scale() -> None:
-    assert app.format_goal_timeline(18, "pt") == "18 meses"
-    assert app.format_goal_timeline(36, "pt") == "3 anos (36 meses)"
+    assert app.format_goal_timeline(18, "en") == "18 months"
+    assert app.format_goal_timeline(36, "en") == "3 years (36 months)"
 
 
 class DummyState:
     def __init__(self) -> None:
-        self.language = "pt"
+        self.language = "en"
         self.chat_mode = "guided"
         self.user_profile = app.default_user_profile()
         self.messages = [
-            {"role": "assistant", "content": "oi"},
-            {"role": "user", "content": "me chamo uilliam"},
+            {"role": "assistant", "content": "hello"},
+            {"role": "user", "content": "my name is uilliam"},
         ]
         self.user_transactions = app.empty_transactions()
 
@@ -120,5 +120,67 @@ def test_persistent_state_roundtrip(tmp_path: Path, monkeypatch) -> None:
 
     loaded = app.load_persistent_state()
     assert loaded.get("chat_mode") == "guided"
-    assert loaded.get("language") == "pt"
+    assert loaded.get("language") == "en"
     assert len(loaded.get("messages", [])) == 2
+
+
+def _make_ready_profile(**overrides) -> dict:
+    """Return a minimal profile that passes profile_is_ready."""
+    profile = app.apply_profile_form_submission(
+        name="Ana",
+        income=4000.0,
+        income_source="salary",
+        investor_style="Moderate",
+        spending=2000.0,
+        has_spending=True,
+        current_wealth=10000.0,
+        target_wealth=50000.0,
+        target_deadline_months=24,
+        notes="",
+    )
+    profile.update(overrides)
+    return profile
+
+
+def test_next_natural_question_quick_mode_always_empty() -> None:
+    profile = _make_ready_profile()
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=False, chat_mode="quick"
+    )
+    assert result == ""
+
+
+def test_next_natural_question_guided_asks_income_source_when_missing() -> None:
+    profile = _make_ready_profile(fonte_renda="", sem_renda=False)
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=False, chat_mode="guided"
+    )
+    assert result != ""
+    assert "income" in result.lower()
+
+
+def test_next_natural_question_guided_asks_csv_when_no_transactions() -> None:
+    profile = _make_ready_profile(fonte_renda="salary")
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=False, chat_mode="guided"
+    )
+    assert result != ""
+    assert "csv" in result.lower() or "data" in result.lower()
+
+
+def test_next_natural_question_guided_asks_goal_when_transactions_exist() -> None:
+    profile = _make_ready_profile(fonte_renda="salary")
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=True, chat_mode="guided"
+    )
+    assert result != ""
+    assert "goal" in result.lower()
+
+
+def test_next_natural_question_english_guided_uses_en_texts() -> None:
+    profile = _make_ready_profile(fonte_renda="salary")
+    result = app.next_natural_question(
+        profile=profile, language="en", has_transactions=True, chat_mode="guided"
+    )
+    assert result != ""
+    assert "goal" in result.lower() or "financial" in result.lower()

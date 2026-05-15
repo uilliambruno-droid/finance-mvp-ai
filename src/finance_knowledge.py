@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -17,14 +18,9 @@ def load_tax_knowledge(base_dir: Path) -> dict[str, Any]:
 def is_tax_query(user_text: str) -> bool:
     lower = user_text.lower()
     keywords = [
-        "taxa",
-        "taxação",
-        "taxacao",
-        "imposto",
         "ir",
         "darf",
         "iof",
-        "tribut",
         "tax",
         "taxation",
         "capital gain",
@@ -35,12 +31,8 @@ def is_tax_query(user_text: str) -> bool:
 def is_portfolio_query(user_text: str) -> bool:
     lower = user_text.lower()
     keywords = [
-        "carteira",
-        "alocação",
-        "alocacao",
         "portfolio",
-        "portfólio",
-        "diversifica",
+        "diversify",
         "allocate",
         "allocation",
     ]
@@ -52,15 +44,12 @@ def is_instrument_query(user_text: str) -> bool:
     keywords = [
         "stock",
         "stocks",
-        "ação",
-        "acoes",
         "etf",
-        "tesouro",
+        "treasury",
         "selic",
-        "cripto",
+        "crypto",
         "bitcoin",
         "ethereum",
-        "renda fixa",
         "fixed income",
     ]
     return any(keyword in lower for keyword in keywords)
@@ -84,24 +73,21 @@ def build_portfolio_guidance(
     no_income = bool(profile.get("sem_renda") or profile.get("desempregado"))
 
     if no_income:
-        if language == "en":
-            return (
-                "Portfolio guidance for this moment: prioritize financial stability first. "
-                "Focus on essential spending, emergency cash, and income generation before taking market risk."
-            )
         return (
-            "Guia de carteira para este momento: priorize estabilidade financeira primeiro. "
-            "Foque em gastos essenciais, caixa de emergência e geração de renda antes de tomar risco de mercado."
+            "Portfolio guidance for this moment: prioritize financial stability first. "
+            "Focus on essential spending, emergency cash, and income generation before taking market risk."
         )
 
     if investor_profile.startswith("conserv"):
-        target_mix = "70% renda fixa / 20% ETFs amplos / 10% proteção e caixa"
+        target_mix = "70% fixed income / 20% broad ETFs / 10% protection and cash"
         categories = {"renda_fixa", "etf", "fundo"}
     elif investor_profile.startswith("moder"):
-        target_mix = "50% renda fixa / 35% ETFs e ações globais / 15% satélites"
+        target_mix = (
+            "50% fixed income / 35% global ETFs and stocks / 15% satellite positions"
+        )
         categories = {"renda_fixa", "etf", "acao", "fundo"}
     else:
-        target_mix = "30% renda fixa / 50% ETFs e ações / 20% satélites (incluindo cripto com limite)"
+        target_mix = "30% fixed income / 50% ETFs and stocks / 20% satellite positions (including capped crypto)"
         categories = {"renda_fixa", "etf", "acao", "cripto", "fundo"}
 
     selected_products = _find_products_by_category(products, categories)[:6]
@@ -109,20 +95,11 @@ def build_portfolio_guidance(
         str(item.get("nome", "")) for item in selected_products if item.get("nome")
     ]
 
-    if language == "en":
-        lines = [f"Suggested educational allocation mix: {target_mix}."]
-        if names:
-            lines.append("Examples from current catalog: " + ", ".join(names) + ".")
-        lines.append(
-            "Use position sizing and diversification; avoid concentrating in one single asset."
-        )
-        return " ".join(lines)
-
-    lines = [f"Mix de alocação educativa sugerido: {target_mix}."]
+    lines = [f"Suggested educational allocation mix: {target_mix}."]
     if names:
-        lines.append("Exemplos no catálogo atual: " + ", ".join(names) + ".")
+        lines.append("Examples from current catalog: " + ", ".join(names) + ".")
     lines.append(
-        "Use diversificação e controle de posição; evite concentrar em um único ativo."
+        "Use position sizing and diversification; avoid concentrating in one single asset."
     )
     return " ".join(lines)
 
@@ -134,24 +111,13 @@ def build_tax_guidance(tax_knowledge: dict[str, Any], language: str) -> str:
     tax_br = tax_knowledge.get("taxacao_brasil", {})
     ir_table = tax_br.get("renda_fixa_regressiva_ir", [])
 
-    if language == "en":
-        parts = [
-            "Taxation essentials:",
-            "Brazilian fixed income often uses a regressive income tax schedule by holding period.",
-            "Current scope is Brazil-first, so taxation guidance is focused on Brazilian rules.",
-        ]
-        if ir_table:
-            parts.append("Reference brackets: " + " | ".join(ir_table) + ".")
-        parts.append(str(tax_br.get("iof", "")))
-        return " ".join(part for part in parts if part)
-
     parts = [
-        "Noções de taxação:",
-        "Na renda fixa brasileira, normalmente há IR regressivo por prazo.",
-        "Escopo atual Brasil-first: a orientação tributária prioriza regras brasileiras.",
+        "Taxation essentials:",
+        "Brazilian fixed income often uses a regressive income tax schedule by holding period.",
+        "Current scope is Brazil-first, so taxation guidance is focused on Brazilian rules.",
     ]
     if ir_table:
-        parts.append("Faixas de referência: " + " | ".join(ir_table) + ".")
+        parts.append("Reference brackets: " + " | ".join(ir_table) + ".")
     iof_text = str(tax_br.get("iof", ""))
     if iof_text:
         parts.append("IOF: " + iof_text)
@@ -165,22 +131,11 @@ def build_instrument_guidance(tax_knowledge: dict[str, Any], language: str) -> s
     selic = tax_knowledge.get("selic", {})
     tesouro = tax_knowledge.get("tesouro_direto", {})
 
-    if language == "en":
-        parts = [
-            "Key product notes:",
-            str(selic.get("descricao", "")),
-            str(selic.get("uso_pratico", "")),
-            "Treasury Direct equivalents in Brazil include Selic, inflation-linked and fixed-rate government bonds.",
-            str(tesouro.get("tesouro_selic", "")),
-            str(tesouro.get("tesouro_ipca", "")),
-            str(tesouro.get("tesouro_prefixado", "")),
-        ]
-        return " ".join(part for part in parts if part)
-
     parts = [
-        "Notas sobre produtos:",
+        "Key product notes:",
         str(selic.get("descricao", "")),
         str(selic.get("uso_pratico", "")),
+        "Treasury Direct equivalents in Brazil include Selic, inflation-linked and fixed-rate government bonds.",
         str(tesouro.get("tesouro_selic", "")),
         str(tesouro.get("tesouro_ipca", "")),
         str(tesouro.get("tesouro_prefixado", "")),
@@ -229,63 +184,36 @@ def build_finance_knowledge_context(
 
 SCENARIO_KEYWORDS: dict[str, list[str]] = {
     "reserva_emergencia": [
-        "reserva de emergência",
-        "reserva emergencia",
         "emergency fund",
-        "reserva financeira",
-        "colchão financeiro",
+        "cash reserve",
     ],
     "dividas_vs_investir": [
-        "dívida",
-        "divida",
-        "quitar",
-        "empréstimo",
-        "emprestimo",
-        "financiamento",
         "debt",
         "loan",
         "pay off",
     ],
     "aportes_mensais": [
-        "aporte",
-        "aportes",
-        "investir todo mês",
-        "investir mensalmente",
-        "quanto investir",
+        "monthly contribution",
         "monthly investment",
         "contribute monthly",
     ],
     "aposentadoria": [
-        "aposentadoria",
-        "previdência",
-        "previdencia",
-        "independência financeira",
-        "independencia financeira",
         "retire",
         "retirement",
-        "longo prazo",
+        "long term",
     ],
     "etf_vs_renda_fixa": [
         "etf vs",
-        "renda fixa vs",
         "vs etf",
-        "vs renda fixa",
-        "comparar",
-        "comparação",
+        "vs fixed income",
+        "compare",
         "compare etf",
-        "etf ou renda fixa",
+        "etf or fixed income",
     ],
 }
 
 SCENARIO_GUIDANCE: dict[str, dict[str, str]] = {
     "reserva_emergencia": {
-        "pt": (
-            "**Reserva de Emergência — como montar:**\n"
-            "• Meta: 6× seus gastos mensais em ativos de alta liquidez (Tesouro Selic, CDB liquidez diária).\n"
-            "• Para quem tem renda variável ou autônomo: prefira 9–12×.\n"
-            "• Não comprometa a reserva com investimentos de risco — ela é proteção, não rendimento.\n"
-            "• Só depois de montar a reserva, direcione o excedente para carteira de crescimento."
-        ),
         "en": (
             "**Emergency Fund — how to build it:**\n"
             "• Target: 6× monthly expenses in highly liquid assets (Tesouro Selic, daily-liquidity CDB).\n"
@@ -295,13 +223,6 @@ SCENARIO_GUIDANCE: dict[str, dict[str, str]] = {
         ),
     },
     "dividas_vs_investir": {
-        "pt": (
-            "**Dívidas vs. Investir — como decidir:**\n"
-            "• Se a taxa da dívida > taxa de retorno esperada do investimento → quite primeiro.\n"
-            "• Cartão de crédito/rotativo (juros > 12% a.m.): quite urgente, sem negociação.\n"
-            "• Financiamento imobiliário (juros < Selic): pode investir em paralelo.\n"
-            "• Regra prática: quite dívidas acima de CDI antes de investir em renda variável."
-        ),
         "en": (
             "**Debt vs. Invest — how to decide:**\n"
             "• If debt rate > expected investment return → pay off debt first.\n"
@@ -311,13 +232,6 @@ SCENARIO_GUIDANCE: dict[str, dict[str, str]] = {
         ),
     },
     "aportes_mensais": {
-        "pt": (
-            "**Aportes Mensais — estratégia:**\n"
-            "• Use o método Dollar Cost Averaging (DCA): aporte fixo todo mês, independente do mercado.\n"
-            "• Sugestão de divisão: 50% renda fixa (Tesouro, CDB) + 30% ETFs (BOVA11, IVVB11) + 20% flexível.\n"
-            "• Automatize o aporte logo após receber a renda — pague-se primeiro.\n"
-            "• Revise a alocação a cada 6–12 meses conforme seu perfil mudar."
-        ),
         "en": (
             "**Monthly Contributions — strategy:**\n"
             "• Use Dollar Cost Averaging (DCA): fixed contribution each month regardless of market.\n"
@@ -327,13 +241,6 @@ SCENARIO_GUIDANCE: dict[str, dict[str, str]] = {
         ),
     },
     "aposentadoria": {
-        "pt": (
-            "**Aposentadoria / Independência Financeira:**\n"
-            "• Regra dos 25×: acumule 25× suas despesas anuais para independência financeira.\n"
-            "• Previdência privada (PGBL vs VGBL): PGBL para quem usa declaração completa de IR; VGBL para os demais.\n"
-            "• Prazo longo favorece renda variável no início e migração gradual para renda fixa ao aproximar da meta.\n"
-            "• Considere Tesouro IPCA+ como âncora de longo prazo para proteger o poder de compra."
-        ),
         "en": (
             "**Retirement / Financial Independence:**\n"
             "• 25× rule: accumulate 25× your annual expenses for financial independence.\n"
@@ -343,14 +250,6 @@ SCENARIO_GUIDANCE: dict[str, dict[str, str]] = {
         ),
     },
     "etf_vs_renda_fixa": {
-        "pt": (
-            "**ETF vs. Renda Fixa — diferenças práticas:**\n"
-            "• Renda fixa: previsibilidade, liquidez, menor risco; ideal para reserva e horizonte curto.\n"
-            "• ETFs (BOVA11, IVVB11, etc.): exposição ampla, custo baixo, mas com volatilidade de mercado.\n"
-            "• Para perfil conservador: predominância de renda fixa com pequena fatia em ETFs.\n"
-            "• Para perfil moderado/arrojado: aumento progressivo em ETFs conforme horizonte cresce.\n"
-            "• Imposto: ETFs têm IR 15% sobre ganho; renda fixa tem tabela regressiva (22,5% a 15%)."
-        ),
         "en": (
             "**ETF vs. Fixed Income — practical differences:**\n"
             "• Fixed income: predictability, liquidity, lower risk; ideal for reserves and short horizon.\n"
@@ -376,7 +275,7 @@ def build_scenario_guidance(user_text: str, language: str) -> str:
     if not scenario:
         return ""
     guidance = SCENARIO_GUIDANCE.get(scenario, {})
-    return guidance.get(language, guidance.get("pt", ""))
+    return guidance.get(language, guidance.get("en", ""))
 
 
 # ---------------------------------------------------------------------------
@@ -384,101 +283,136 @@ def build_scenario_guidance(user_text: str, language: str) -> str:
 # ---------------------------------------------------------------------------
 
 _TRANSACTION_VERBS_OUT = [
-    "gastei",
-    "paguei",
-    "comprei",
-    "gasto",
-    "saiu",
     "spent",
     "paid",
     "bought",
+    "gastei",
+    "paguei",
+    "comprei",
+    "debited",
+    "debit",
+    "cost",
 ]
 _TRANSACTION_VERBS_IN = [
-    "recebi",
-    "ganhei",
-    "entrou",
-    "recebo",
-    "faturei",
     "received",
     "earned",
     "got",
+    "win",
+    "won",
+    "recebi",
+    "ganhei",
+    "ganhou",
 ]
 
 _AMOUNT_RE = re.compile(
-    r"R?\$?\s*(\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:\.\d{1,2})?)",
+    (
+        r"R?\$?\s*"
+        r"(\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?|\d+(?:[\.,]\d{1,2})?)"
+        r"(?!\d)"
+        r"\s*"
+        r"(mil|k|thousand|thousands|grand|grands|conto|contos)?"
+    ),
     re.I,
 )
 
+_MAGNITUDE_MULTIPLIERS: dict[str, int] = {
+    "mil": 1000,
+    "k": 1000,
+    "thousand": 1000,
+    "thousands": 1000,
+    "grand": 1000,
+    "grands": 1000,
+    "conto": 1000,
+    "contos": 1000,
+}
+
+_EXPENSE_HINTS = [
+    "expense",
+    "expenses",
+    "despesa",
+    "despesas",
+    "gasto",
+    "gastos",
+    "spent",
+    "spend",
+    "purchase",
+    "comprar",
+    "compra",
+    "food",
+    "mercado",
+    "ifood",
+]
+
+_INCOME_HINTS = [
+    "income",
+    "salary",
+    "freelance",
+    "paycheck",
+    "receita",
+    "salario",
+    "renda",
+    "recebi",
+    "ganhei",
+]
+
 _CATEGORY_HINTS: dict[str, list[str]] = {
-    "alimentação": [
-        "comida",
-        "almoço",
-        "jantar",
-        "cafe",
+    "food": [
+        "food",
+        "breakfast",
+        "lunch",
+        "dinner",
         "restaurante",
         "ifood",
         "mercado",
         "supermercado",
-        "food",
-        "lunch",
-        "dinner",
+        "restaurant",
+        "grocery",
     ],
-    "transporte": [
+    "transport": [
         "uber",
-        "ônibus",
-        "onibus",
-        "metrô",
+        "bus",
+        "subway",
         "metro",
-        "gasolina",
-        "combustivel",
-        "combustível",
+        "gas",
+        "fuel",
         "transport",
     ],
-    "saúde": [
-        "farmácia",
-        "farmacia",
-        "médico",
-        "medico",
+    "health": [
+        "pharmacy",
+        "doctor",
         "consulta",
         "exame",
         "health",
-        "pharmacy",
-        "doctor",
+        "appointment",
+        "exam",
     ],
-    "moradia": [
-        "aluguel",
-        "condomínio",
-        "condominio",
-        "luz",
-        "água",
-        "agua",
-        "internet",
+    "housing": [
         "rent",
+        "condo",
+        "electricity",
+        "water",
+        "internet",
         "utilities",
     ],
-    "lazer": [
+    "leisure": [
         "cinema",
         "show",
-        "viagem",
-        "viagem",
-        "entretenimento",
+        "travel",
+        "entertainment",
         "netflix",
         "spotify",
-        "entertainment",
-        "travel",
     ],
-    "educação": [
-        "curso",
-        "livro",
-        "escola",
-        "faculdade",
-        "mensalidade",
+    "education": [
         "education",
         "course",
+        "book",
+        "school",
+        "college",
+        "tuition",
     ],
-    "salário": ["salário", "salario", "salary", "holerite"],
+    "salary": ["salary", "payroll", "payslip"],
     "freelance": ["freela", "freelance", "projeto", "cliente", "client"],
-    "investimento": ["aporte", "investimento", "resgate", "rendimento"],
+    "investments": ["contribution", "investment", "withdrawal", "yield"],
 }
 
 
@@ -487,15 +421,27 @@ def _detect_category(text: str) -> str:
     for category, hints in _CATEGORY_HINTS.items():
         if any(h in lower for h in hints):
             return category
-    return "geral"
+    return "general"
 
 
-def _parse_amount(raw: str) -> float | None:
+def _parse_amount(raw: str, magnitude: str = "") -> float | None:
     cleaned = raw.replace(".", "").replace(",", ".")
     try:
-        return float(cleaned)
+        amount = float(cleaned)
+        normalized_magnitude = magnitude.lower().strip() if magnitude else ""
+        amount *= _MAGNITUDE_MULTIPLIERS.get(normalized_magnitude, 1)
+        return amount
     except ValueError:
         return None
+
+
+def _infer_transaction_type(text: str) -> str:
+    lower = text.lower()
+    if any(hint in lower for hint in _INCOME_HINTS):
+        return "entrada"
+    if any(hint in lower for hint in _EXPENSE_HINTS):
+        return "saida"
+    return "saida"
 
 
 def is_transaction_message(user_text: str) -> bool:
@@ -505,27 +451,68 @@ def is_transaction_message(user_text: str) -> bool:
     return has_verb and has_amount
 
 
-def extract_transaction_from_message(user_text: str) -> dict | None:
-    """Return a transaction dict {data, valor, categoria, tipo} or None."""
-    lower = user_text.lower()
+def extract_transactions_from_message(user_text: str) -> list[dict[str, Any]]:
+    """Return a list of transaction dicts {data, valor, categoria, tipo}."""
+    verbs = _TRANSACTION_VERBS_OUT + _TRANSACTION_VERBS_IN
+    verbs_pattern = "|".join(sorted(map(re.escape, verbs), key=len, reverse=True))
+    segment_re = re.compile(
+        rf"\b(?P<verb>{verbs_pattern})\b(?P<chunk>.*?)(?=\b(?:{verbs_pattern})\b|$)",
+        re.I | re.S,
+    )
 
+    transactions: list[dict[str, Any]] = []
+    for match in segment_re.finditer(user_text):
+        verb = match.group("verb").lower()
+        chunk = match.group("chunk") or ""
+        amount_match = _AMOUNT_RE.search(chunk)
+        if not amount_match:
+            continue
+
+        amount = _parse_amount(amount_match.group(1), amount_match.group(2) or "")
+        if amount is None or amount <= 0:
+            continue
+
+        tipo = "entrada" if verb in _TRANSACTION_VERBS_IN else "saida"
+        category = _detect_category(chunk)
+        if category == "general":
+            category = _detect_category(user_text)
+
+        transactions.append(
+            {
+                "data": date.today().isoformat(),
+                "valor": amount,
+                "categoria": category,
+                "tipo": tipo,
+            }
+        )
+
+    if transactions:
+        return transactions
+
+    # Fallback for messages where verb/amount segmentation fails.
     amount_match = _AMOUNT_RE.search(user_text)
     if not amount_match:
-        return None
-    amount = _parse_amount(amount_match.group(1))
-    if not amount:
-        return None
+        return []
 
-    tipo = "entrada" if any(v in lower for v in _TRANSACTION_VERBS_IN) else "saida"
-    category = _detect_category(user_text)
-    today = __import__("datetime").date.today().isoformat()
+    amount = _parse_amount(amount_match.group(1), amount_match.group(2) or "")
+    if amount is None or amount <= 0:
+        return []
 
-    return {
-        "data": today,
-        "valor": amount,
-        "categoria": category,
-        "tipo": tipo,
-    }
+    tipo = _infer_transaction_type(user_text)
+    return [
+        {
+            "data": date.today().isoformat(),
+            "valor": amount,
+            "categoria": _detect_category(user_text),
+            "tipo": tipo,
+        }
+    ]
+
+
+def extract_transaction_from_message(user_text: str) -> dict | None:
+    """Return a transaction dict {data, valor, categoria, tipo} or None."""
+    transactions = extract_transactions_from_message(user_text)
+    return transactions[0] if transactions else None
 
 
 def extract_user_name(user_text: str) -> str | None:
@@ -534,7 +521,7 @@ def extract_user_name(user_text: str) -> str | None:
         return None
 
     explicit_match = re.search(
-        r"(?:meu nome é|me chamo|my name is|i am|i'm|sou)\s+([A-Za-zÀ-ÿ' -]{2,40})",
+        r"(?:my name is|i am|i'm)\s+([A-Za-zÀ-ÿ' -]{2,40})",
         text,
         re.I,
     )
@@ -548,25 +535,13 @@ def extract_user_name(user_text: str) -> str | None:
 
     lower = cleaned.lower()
     disallowed_fragments = [
-        "quero",
-        "preciso",
         "invest",
         "etf",
-        "ação",
-        "acoes",
         "bitcoin",
-        "carteira",
         "tax",
-        "imposto",
-        "renda",
         "income",
         "goal",
-        "objetivo",
         "help",
-        "ajuda",
-        "oi",
-        "olá",
-        "ola",
         "hello",
         "hi",
     ]

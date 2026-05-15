@@ -70,6 +70,15 @@ mvp-finance-ai/
 - Nunca commit da sua API key ou dados sensíveis
 - Use `.env.example` como template para novos colaboradores
 
+### 🔑 Login por email sem cadastro (custo zero)
+
+1. Crie um projeto no Supabase (plano Free).
+2. Ative Email OTP em `Authentication -> Providers -> Email`.
+3. Desative cadastro aberto, mantendo acesso por convite/lista autorizada.
+4. Rode o SQL de `README.md` para criar `user_states` com RLS.
+5. Preencha no `.env`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`.
+6. Opcional: restrinja acesso com `SUPABASE_ALLOWED_EMAILS` e/ou `SUPABASE_ALLOWED_DOMAINS`.
+
 ---
 
 **Ambiente pronto para começar! 🎉**

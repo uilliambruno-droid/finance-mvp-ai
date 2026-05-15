@@ -3,12 +3,34 @@ services:
     name: pluto-finance-ai
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    startCommand: python -m streamlit run src/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
-      - key: GROQ_API_KEY
-        sync: false          # você define no painel do Render
-      - key: GROQ_MODEL
-        value: llama-3.1-8b-instant
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: openrouter/auto
+      - key: LLM_MAX_OUTPUT_TOKENS
+        value: "1000"
+      - key: LLM_CONTEXT_RECENT_MESSAGES
+        value: "4"
+      - key: LLM_CONTEXT_TOP_CATEGORIES
+        value: "3"
+      - key: LLM_CONTEXT_PRODUCTS
+        value: "6"
       - key: ENVIRONMENT
         value: production
+      - key: DISABLE_OLLAMA
+        value: "true"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_USER_STATES_TABLE
+        value: user_states
+      - key: SUPABASE_EMAIL_REDIRECT_TO
+        sync: false
+      - key: SUPABASE_ALLOWED_EMAILS
+        sync: false
+      - key: SUPABASE_ALLOWED_DOMAINS
+        sync: false
     plan: free

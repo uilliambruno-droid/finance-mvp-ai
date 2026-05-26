@@ -30,6 +30,35 @@ def log_event(event_name: str, payload: dict[str, Any] | None = None) -> None:
     pass
 
 
+def _extract_openrouter_content(choice: dict[str, Any]) -> str | None:
+    """Extract text content from an OpenRouter choice payload safely."""
+    message = choice.get("message", {}) if isinstance(choice, dict) else {}
+    content = message.get("content") if isinstance(message, dict) else None
+
+    if isinstance(content, str):
+        text = content.strip()
+        if text and text.lower() != "none":
+            return text
+        return None
+
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                text_piece = item.get("text")
+                if isinstance(text_piece, str) and text_piece.strip():
+                    parts.append(text_piece.strip())
+        combined = "\n".join(parts).strip()
+        return combined or None
+
+    legacy_text = choice.get("text") if isinstance(choice, dict) else None
+    if isinstance(legacy_text, str):
+        legacy_text = legacy_text.strip()
+        return legacy_text or None
+
+    return None
+
+
 def call_openrouter(messages: list[dict[str, str]]) -> tuple[str | None, bool, str]:
     """Call OpenRouter API with retry logic and rate limit detection."""
     api_key = OPENROUTER_API_KEY.strip()
@@ -70,8 +99,14 @@ def call_openrouter(messages: list[dict[str, str]]) -> tuple[str | None, bool, s
                         "OpenRouter returned 200 with no usable content.",
                     )
 
-                answer = str(choices[0].get("message", {}).get("content", "")).strip()
-                return (answer if answer else None), False, "OpenRouter returned 200."
+                answer = _extract_openrouter_content(choices[0])
+                if answer:
+                    return answer, False, "OpenRouter returned 200."
+                return (
+                    None,
+                    False,
+                    "OpenRouter returned 200 with empty/non-text content.",
+                )
 
             try:
                 data = response.json()

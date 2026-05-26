@@ -121,7 +121,11 @@ def apply_post_response_validation(
 ) -> str:
     texts = get_texts(language)
     lower = user_text.lower()
-    answer = response_text.strip()
+    answer = (response_text or "").strip()
+
+    # Defensive cleanup for providers returning literal "None" as text content.
+    if answer.lower() == "none":
+        answer = ""
 
     if contains_sensitive_offtopic_content(user_text):
         return safe_financial_redirect(language)
